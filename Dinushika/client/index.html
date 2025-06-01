@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.266 Adaptive Streaming Player</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 H.266 Adaptive Streaming Player</h1>
+            <p>Fixed resolution, adaptive quality streaming</p>
+        </header>
+
+        <main>
+            <div class="video-container">
+                <video id="adaptive-player" 
+                       controls 
+                       preload="metadata"
+                       crossorigin="anonymous">
+                    <p>Your browser doesn't support HTML5 video.</p>
+                </video>
+                
+                <div class="video-overlay" id="video-overlay">
+                    <div class="quality-indicator" id="quality-indicator">
+                        <span class="quality-badge">AUTO</span>
+                    </div>
+                    <div class="loading-spinner" id="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="video-selector">
+                    <label for="video-select">Select Video:</label>
+                    <select id="video-select">
+                        <option value="">Loading videos...</option>
+                    </select>
+                </div>
+
+                <div class="quality-controls">
+                    <label for="quality-mode">Quality Mode:</label>
+                    <select id="quality-mode">
+                        <option value="auto">Auto (Recommended)</option>
+                        <option value="high">High Quality</option>
+                        <option value="medium">Medium Quality</option>
+                        <option value="low">Low Quality</option>
+                        <option value="ultra-low">Ultra Low Quality</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stats-panel" id="stats-panel">
+                <div class="stat-group">
+                    <h3>📊 Streaming Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <label>Current Quality:</label>
+                            <span id="current-quality">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Bandwidth:</label>
+                            <span id="bandwidth-display">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Buffer Health:</label>
+                            <span id="buffer-health">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Resolution:</label>
+                            <span id="resolution-display">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Bitrate:</label>
+                            <span id="bitrate-display">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Quality Switches:</label>
+                            <span id="quality-switches">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bandwidth-chart">
+                    <h4>📈 Bandwidth History</h4>
+                    <canvas id="bandwidth-chart" width="300" height="100"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/bandwidth-detector.js"></script>
+    <script src="js/buffer-manager.js"></script>
+    <script src="js/quality-manager.js"></script>
+    <script src="js/adaptive-player.js"></script>
+    
+    <script>
+        // Initialize the adaptive player
+        document.addEventListener('DOMContentLoaded', () => {
+            const player = new AdaptivePlayer();
+            player.initialize();
+        });
+    </script>
+</body>
+</html>
