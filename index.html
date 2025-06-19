@@ -3,457 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Streaming Optimization Research</title>
+    <title>FRAVS - Fixed-Resolution Adaptive Video System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e'
-                        }
-                    }
-                }
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .animate-bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0,-30px,0);
+            }
+            70% {
+                transform: translate3d(0,-15px,0);
+            }
+            90% {
+                transform: translate3d(0,-4px,0);
             }
         }
-    </script>
-    <style>
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        .navbar-bg {
+            backdrop-filter: blur(10px);
+        }
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #dbeafe 0%, #ffffff 100%);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-white">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-lg">
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-white/95 navbar-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">VS</span>
+                    <i data-lucide="play" class="h-8 w-8 text-blue-600"></i>
+                    <span class="text-xl font-bold text-blue-600">FRAVS</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <button onclick="scrollToSection('#home')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Home</button>
+                        <button onclick="scrollToSection('#project-scope')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Project Scope</button>
+                        <button onclick="scrollToSection('#methodology')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Methodology</button>
+                        <button onclick="scrollToSection('#results')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Results</button>
+                        <button onclick="scrollToSection('#downloads')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Downloads</button>
+                        <button onclick="scrollToSection('#about-us')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">About Us</button>
+                        <button onclick="scrollToSection('#contact')" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Contact</button>
                     </div>
-                    <span class="text-xl font-bold text-primary-700">VideoStream Research</span>
                 </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-700 hover:text-primary-600 transition-colors">Home</a>
-                    <a href="#abstract" class="text-gray-700 hover:text-primary-600 transition-colors">Abstract</a>
-                    <a href="#objectives" class="text-gray-700 hover:text-primary-600 transition-colors">Objectives</a>
-                    <a href="#methodology" class="text-gray-700 hover:text-primary-600 transition-colors">Methodology</a>
-                    <a href="#team" class="text-gray-700 hover:text-primary-600 transition-colors">Team</a>
-                    <a href="#downloads" class="text-gray-700 hover:text-primary-600 transition-colors">Downloads</a>
-                </div>
+                
+                <!-- Mobile menu button -->
                 <div class="md:hidden">
-                    <button id="mobile-menu-btn" class="text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600 p-2">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
                     </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+                    <button onclick="scrollToSection('#home'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Home</button>
+                    <button onclick="scrollToSection('#project-scope'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Project Scope</button>
+                    <button onclick="scrollToSection('#methodology'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Methodology</button>
+                    <button onclick="scrollToSection('#results'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Results</button>
+                    <button onclick="scrollToSection('#downloads'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Downloads</button>
+                    <button onclick="scrollToSection('#about-us'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">About Us</button>
+                    <button onclick="scrollToSection('#contact'); toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Contact</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Home Section -->
     <section id="home" class="min-h-screen flex items-center justify-center gradient-bg pt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="mb-8">
-                <div class="w-32 h-32 mx-auto mb-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-9h10a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z"></path>
-                    </svg>
+                <div class="flex justify-center mb-6">
+                    <div class="relative">
+                        <i data-lucide="play" class="w-32 h-32 text-blue-600"></i>
+                        <div class="absolute inset-0 bg-blue-100 rounded-full animate-pulse -z-10"></div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-                    Optimizing Video Streaming Quality at Low Bandwidth
-                </h1>
-                <p class="text-xl md:text-2xl mb-6 opacity-90">
-                    with Static Resolution Maintenance
+                <h1 class="text-4xl md:text-6xl font-bold text-blue-600 mb-4">FRAVS</h1>
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">Fixed-Resolution Adaptive Video System</h2>
+                <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto">
+                    Optimizing Video Streaming Quality Under Low Bandwidth Conditions with Static Resolution Maintenance
                 </p>
-                <p class="text-lg mb-8 max-w-4xl mx-auto opacity-80">
-                    Revolutionary research combining H.266/VVC codec technology with intelligent quality optimization 
-                    to maintain high-definition video streaming even under bandwidth constraints.
+                <p class="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+                    Revolutionary research combining H.265/H.266 codec technology with machine learning to maintain video quality without resolution degradation in bandwidth-constrained environments.
                 </p>
                 <div class="space-x-4">
-                    <a href="#abstract" class="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                        Read Abstract
-                    </a>
-                    <a href="#downloads" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors">
-                        Download Papers
-                    </a>
+                    <button onclick="scrollToSection('#project-scope')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
+                        Learn More
+                    </button>
+                    <button onclick="scrollToSection('#downloads')" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors duration-200">
+                        View Research
+                    </button>
                 </div>
             </div>
-            <div class="animate-bounce text-center">
-                <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-            </div>
+            <button onclick="scrollToSection('#project-scope')" class="animate-bounce text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                <i data-lucide="arrow-down" class="h-8 w-8 mx-auto"></i>
+            </button>
         </div>
     </section>
 
-    <!-- University Info -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-primary-50 rounded-xl p-8">
-                <h2 class="text-2xl font-bold text-primary-900 mb-4">
-                    Bachelor of Information and Communication Technology Honours Degree
-                </h2>
-                <p class="text-primary-700 text-lg">
-                    University of Sri Jayewardenepura • Faculty of Technology • 2024
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Abstract Section -->
-    <section id="abstract" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Abstract</h2>
-                <div class="w-24 h-1 bg-primary-600 mx-auto"></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
-                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-                    <p class="mb-6">
-                        In the modern digital world, video streaming has become one of the key methods that transmit various 
-                        information with a focus on high-definition (HD) and ultra-high-definition (UHD) quality. This research 
-                        explores a pressing challenge involved with streaming videos, keeping up high-quality visuals anytime 
-                        the network conditions change without changing the resolution settings.
-                    </p>
-                    <p>
-                        An innovative algorithm is put forth that allows for maintaining static video resolution while dynamically 
-                        optimizing other video characteristics like reducing noise, bit depth, and frame rate so that they can 
-                        respond well enough when there are limitations on the bandwidth. The research harnesses H.266 (Versatile 
-                        Video Coding or VVC) codec's advanced compression capabilities which offer superior compression efficiency 
-                        than previous standards.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Research Overview -->
-    <section class="py-20 bg-white">
+    <!-- Project Scope Section -->
+    <section id="project-scope" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Research Overview</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Understanding the challenges and innovations in modern video streaming technology
+                    Traditional Adaptive Bitrate Streaming (ABR) systems often compromise visual quality by reducing resolution during bandwidth constraints. Our research presents a novel approach that maintains constant resolution while optimizing other video parameters for superior user experience.
                 </p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl card-hover">
-                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Research Problem</h3>
-                    <p class="text-gray-700">
-                        Traditional Adaptive Bitrate Streaming (ABR) methods require resolution changes during low bandwidth, 
-                        causing significant quality degradation and user experience issues.
-                    </p>
-                </div>
-                <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl card-hover">
-                    <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Innovation</h3>
-                    <p class="text-gray-700">
-                        Our approach maintains static video resolution while dynamically optimizing noise reduction, 
-                        bit depth, and frame rate using advanced H.266/VVC codec technology.
-                    </p>
-                </div>
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl card-hover">
-                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Impact</h3>
-                    <p class="text-gray-700">
-                        Addresses critical gaps in low-bandwidth streaming, providing consistent quality without 
-                        resolution switching, improving user experience significantly.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Objectives Section -->
-    <section id="objectives" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Research Objectives</h2>
-                <div class="w-24 h-1 bg-primary-600 mx-auto"></div>
             </div>
             
-            <!-- Main Objective -->
-            <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 md:p-12 text-white mb-12">
-                <h3 class="text-2xl font-bold mb-4">Main Objective</h3>
-                <p class="text-lg leading-relaxed">
-                    To develop an algorithm that maintains constant video quality over time despite different bandwidth conditions, 
-                    as a good substitute for Adaptive Bitrate Streaming (ABR), by incorporating H.266 codec and considering noise 
-                    reduction, bit depth adjustment, and frame rate optimization rather than changing the video resolution.
-                </p>
-            </div>
-
-            <!-- Specific Objectives -->
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Algorithm Design</h4>
-                    <p class="text-gray-600">
-                        Design an algorithm that utilizes the H.266 codec to manage bandwidth constraints 
-                        without reducing video resolution.
+                <div class="bg-blue-50 p-8 rounded-xl">
+                    <i data-lucide="target" class="h-12 w-12 text-blue-600 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Research Problem</h3>
+                    <p class="text-gray-700">
+                        Current ABR systems prioritize bandwidth accommodation through resolution reduction, creating a trade-off between stream integrity and visual quality. This is particularly problematic for educational content, medical consultations, and professional presentations where visual consistency is crucial for effectiveness.
                     </p>
                 </div>
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Performance Testing</h4>
-                    <p class="text-gray-600">
-                        Test the algorithm's effectiveness in maintaining high video quality under low 
-                        bandwidth conditions through comprehensive evaluation.
+                
+                <div class="bg-green-50 p-8 rounded-xl">
+                    <i data-lucide="eye" class="h-12 w-12 text-green-600 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Solution</h3>
+                    <p class="text-gray-700">
+                        FRAVS (Fixed-Resolution Adaptive Video System) maintains constant resolution while dynamically optimizing bitrate, frame rate, and encoding parameters. Our system integrates H.265/H.266 codec technology with LSTM-based bandwidth prediction and intelligent quality adaptation algorithms.
                     </p>
                 </div>
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Comparative Analysis</h4>
-                    <p class="text-gray-600">
-                        Compare the proposed algorithm against existing ABR methods in terms of video 
-                        quality preservation and user experience.
+                
+                <div class="bg-purple-50 p-8 rounded-xl">
+                    <i data-lucide="check-circle" class="h-12 w-12 text-purple-600 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Key Innovation</h3>
+                    <p class="text-gray-700">
+                        Our approach fundamentally challenges the assumption that resolution reduction is necessary for bandwidth adaptation. By optimizing non-spatial parameters and using advanced compression techniques, we achieve superior results while maintaining visual consistency.
                     </p>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-gray-50 rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">System Architecture Highlights</h3>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <i data-lucide="cpu" class="h-10 w-10 text-blue-600 mx-auto mb-3"></i>
+                        <h4 class="font-semibold text-gray-900">H.265/H.266 Encoding</h4>
+                        <p class="text-sm text-gray-600">Advanced codec optimization</p>
+                    </div>
+                    <div class="text-center">
+                        <i data-lucide="brain" class="h-10 w-10 text-green-600 mx-auto mb-3"></i>
+                        <h4 class="font-semibold text-gray-900">ML Prediction</h4>
+                        <p class="text-sm text-gray-600">LSTM bandwidth forecasting</p>
+                    </div>
+                    <div class="text-center">
+                        <i data-lucide="wifi" class="h-10 w-10 text-purple-600 mx-auto mb-3"></i>
+                        <h4 class="font-semibold text-gray-900">Adaptive Streaming</h4>
+                        <p class="text-sm text-gray-600">DASH/HLS compatibility</p>
+                    </div>
+                    <div class="text-center">
+                        <i data-lucide="bar-chart-3" class="h-10 w-10 text-red-600 mx-auto mb-3"></i>
+                        <h4 class="font-semibold text-gray-900">Quality Analytics</h4>
+                        <p class="text-sm text-gray-600">VMAF, PSNR, SSIM metrics</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Methodology Section -->
-    <section id="methodology" class="py-20 bg-white">
+    <section id="methodology" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Methodology</h2>
                 <p class="text-xl text-gray-600">
-                    Applied experimental methodology focusing on design, implementation, and evaluation
+                    Our comprehensive approach integrates multiple advanced technologies for optimal video streaming performance
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl text-center">
-                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
-                    </svg>
-                    <h4 class="text-lg font-bold mb-2">Server-Side Components</h4>
-                    <p class="text-sm">H.266/VVC Encoding, DASH Segmentation, Bandwidth Monitoring</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                    <i data-lucide="cpu" class="h-12 w-12 text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Content-Aware Encoding</h3>
+                    <p class="text-gray-600 mb-4">H.265/HEVC encoding with multi-dimensional content analysis including spatial, temporal, and frequency domain assessment.</p>
+                    <ul class="space-y-1">
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            ROI detection
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Dynamic CRF adjustment
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Motion analysis
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl text-center">
-                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                    </svg>
-                    <h4 class="text-lg font-bold mb-2">Client-Side Components</h4>
-                    <p class="text-sm">HTML5 Player, Quality Enhancement, Buffer Monitoring</p>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                    <i data-lucide="trending-up" class="h-12 w-12 text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Bandwidth Prediction</h3>
+                    <p class="text-gray-600 mb-4">LSTM-based predictor trained on network sequences for accurate bandwidth forecasting and proactive adaptation.</p>
+                    <ul class="space-y-1">
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            10-timestep sequences
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Confidence thresholds
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Hysteresis logic
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl text-center">
-                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
-                    <h4 class="text-lg font-bold mb-2">Machine Learning</h4>
-                    <p class="text-sm">LSTM Networks, Transformer Models, AI Enhancement</p>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                    <i data-lucide="database" class="h-12 w-12 text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Quality Adaptation</h3>
+                    <p class="text-gray-600 mb-4">Intelligent engine that selects optimal profiles while maintaining static resolution through non-spatial parameter optimization.</p>
+                    <ul class="space-y-1">
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Buffer-aware decisions
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Quality oscillation reduction
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Multi-tier profiles
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl text-center">
-                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
-                    </svg>
-                    <h4 class="text-lg font-bold mb-2">Real-Time Communication</h4>
-                    <p class="text-sm">WebSocket Protocol, HTTP Streaming, Byte-Range Requests</p>
-                </div>
-            </div>
-
-            <!-- Technologies -->
-            <div class="bg-gray-50 rounded-xl p-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Core Technologies</h3>
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">H.266/VVC</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">Python</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">JavaScript</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">Node.js</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">TensorFlow</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">FFmpeg</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">WebSocket</span>
-                    <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">DASH/HLS</span>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                    <i data-lucide="wifi" class="h-12 w-12 text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Stream Packaging</h3>
+                    <p class="text-gray-600 mb-4">CMAF-based segmentation supporting both DASH and HLS formats for cross-platform compatibility.</p>
+                    <ul class="space-y-1">
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Low-latency segments
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Adaptive delivery
+                        </li>
+                        <li class="text-sm text-gray-500 flex items-center">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-green-500 mr-2"></i>
+                            Real-time monitoring
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Results Section -->
-    <section class="py-20 bg-gray-50">
+    <section id="results" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Results & Impact</h2>
-                <div class="w-24 h-1 bg-primary-600 mx-auto"></div>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">50%</div>
-                    <p class="text-gray-700">Better Compression vs H.265</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">95%</div>
-                    <p class="text-gray-700">VMAF Score Improvement</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">0</div>
-                    <p class="text-gray-700">Resolution Switches</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">Key Findings</h3>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Performance Improvements</h4>
-                        <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Significant VMAF score improvement
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Eliminated jarring resolution changes
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Improved buffer stability
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-900 mb-3">User Experience Benefits</h4>
-                        <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Visual consistency maintained
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Reduced user frustration
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Better accessibility in low-bandwidth regions
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Research Team Section -->
-    <section id="team" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Research Team</h2>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Results & Evaluation</h2>
                 <p class="text-xl text-gray-600">
-                    Meet the dedicated researchers behind this innovative video streaming technology
+                    Comprehensive evaluation demonstrates significant improvements over traditional ABR systems
                 </p>
             </div>
             
-            <!-- Supervisor -->
-            <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 mb-12 text-white text-center">
-                <h3 class="text-2xl font-bold mb-4">Research Supervisor</h3>
-                <div class="max-w-2xl mx-auto">
-                    <h4 class="text-xl font-semibold mb-2">L. K. Pulasthi Dhananjaya Gunawardhana</h4>
-                    <p class="text-primary-100 mb-2">University of Sri Jayewardenepura</p>
-                    <p class="text-primary-200">pulasthi@sjp.ac.lk</p>
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-blue-50 p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">23.4%</div>
+                    <p class="text-gray-700 font-semibold">VMAF Score Improvement</p>
+                    <p class="text-sm text-gray-600">Over traditional ABR systems</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-green-600 mb-2">95.3%</div>
+                    <p class="text-gray-700 font-semibold">Bandwidth Utilization</p>
+                    <p class="text-sm text-gray-600">Efficiency in low bandwidth conditions</p>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-xl text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">84.7%</div>
+                    <p class="text-gray-700 font-semibold">Prediction Accuracy</p>
+                    <p class="text-sm text-gray-600">LSTM bandwidth forecasting</p>
                 </div>
             </div>
-
-            <!-- Research Team -->
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center card-hover">
-                    <div class="w-24 h-24 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-primary-600">DM</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Dharmakeerthi M P B M</h3>
-                    <p class="text-primary-600 font-semibold mb-2">Software Technology </p>
-                    <div class="text-sm text-gray-600 mb-4">
-                        <p>Index: ICT/20/832</p>
-                        <p>ict20832@fot.sjp.ac.lk</p>
-                    </div>
-                    <p class="text-gray-700 text-sm">
-                        Lead developer focusing on H.266/VVC implementation and video encoding optimization algorithms.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center card-hover">
-                    <div class="w-24 h-24 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-primary-600">GH</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Gunathilaka H A D D P</h3>
-                    <p class="text-primary-600 font-semibold mb-2">Network Technology </p>
-                    <div class="text-sm text-gray-600 mb-4">
-                        <p>Index: ICT/20/845</p>
-                        <p>ict20845@fot.sjp.ac.lk</p>
-                    </div>
-                    <p class="text-gray-700 text-sm">
-                        Specialist in network protocols, bandwidth optimization, and real-time communication systems.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center card-hover">
-                    <div class="w-24 h-24 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-primary-600">HG</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Hiruni G K G</h3>ssss
-                    <p class="text-primary-600 font-semibold mb-2">Multimedia Technology </p>
-                    <div class="text-sm text-gray-600 mb-4">
-                        <p>Index: ICT/20/851</p>
-                        <p>ict20851@fot.sjp.ac.lk</p>
-                    </div>
-                    <p class="text-gray-700 text-sm">
-                        Expert in multimedia processing, quality enhancement techniques, and user experience optimization.
-                    </p>
+            
+            <div class="bg-gray-50 rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Quality Metrics Comparison</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-3">Network Condition</th>
+                                <th class="text-left py-3">System</th>
+                                <th class="text-left py-3">VMAF Score</th>
+                                <th class="text-left py-3">PSNR (dB)</th>
+                                <th class="text-left py-3">SSIM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3">High BW (10 Mbps)</td>
+                                <td class="py-3 text-blue-600 font-semibold">Our Solution</td>
+                                <td class="py-3">91.2 ± 2.1</td>
+                                <td class="py-3">37.8 ± 1.4</td>
+                                <td class="py-3">0.934 ± 0.015</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3">Medium BW (3 Mbps)</td>
+                                <td class="py-3 text-blue-600 font-semibold">Our Solution</td>
+                                <td class="py-3">85.7 ± 2.8</td>
+                                <td class="py-3">35.2 ± 1.7</td>
+                                <td class="py-3">0.918 ± 0.019</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">Low BW (1 Mbps)</td>
+                                <td class="py-3 text-blue-600 font-semibold">Our Solution</td>
+                                <td class="py-3">76.4 ± 3.6</td>
+                                <td class="py-3">32.1 ± 2.1</td>
+                                <td class="py-3">0.901 ± 0.028</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -463,71 +357,136 @@
     <section id="downloads" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Research Publications</h2>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Downloads</h2>
                 <p class="text-xl text-gray-600">
-                    Access complete research documentation and presentation materials
+                    Access all research documents and implementation materials
                 </p>
             </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-300 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-8 h-8 text-primary-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <h3 class="text-xl font-bold text-gray-900">Full Thesis</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="file-text" class="h-8 w-8 text-blue-600 flex-shrink-0"></i>
                     </div>
-                    <p class="text-gray-600 mb-6 text-sm">
-                        Complete research thesis with detailed methodology, implementation, and results analysis.
-                    </p>
-                    <button class="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors duration-200 text-sm font-medium">
-                        Download PDF
-                    </button>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Final Thesis Report</h3>
+                    <p class="text-gray-600 mb-6 text-sm">Complete research documentation including methodology, results, and evaluation</p>
+                    <a href="#" class="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                        <i data-lucide="file-text" class="h-4 w-4"></i>
+                        <span>Download</span>
+                    </a>
                 </div>
                 
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-300 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
-                        </svg>
-                        <h3 class="text-xl font-bold text-gray-900">Presentation</h3>
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="file-text" class="h-8 w-8 text-blue-600 flex-shrink-0"></i>
                     </div>
-                    <p class="text-gray-600 mb-6 text-sm">
-                        Research presentation slides covering key findings and technical innovations.
-                    </p>
-                    <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
-                        Download PPTX
-                    </button>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Research Proposal</h3>
+                    <p class="text-gray-600 mb-6 text-sm">Initial research proposal outlining project objectives and methodology</p>
+                    <a href="#" class="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                        <i data-lucide="file-text" class="h-4 w-4"></i>
+                        <span>Download</span>
+                    </a>
                 </div>
                 
-                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-300 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                        </svg>
-                        <h3 class="text-xl font-bold text-gray-900">Source Code</h3>
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="presentation" class="h-8 w-8 text-blue-600 flex-shrink-0"></i>
                     </div>
-                    <p class="text-gray-600 mb-6 text-sm">
-                        Complete implementation source code and experimental setup documentation.
-                    </p>
-                    <button class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
-                        Access GitHub
-                    </button>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Conference Presentation</h3>
+                    <p class="text-gray-600 mb-6 text-sm">Presentation slides from research symposium and conferences</p>
+                    <a href="#" class="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                        <i data-lucide="presentation" class="h-4 w-4"></i>
+                        <span>Download</span>
+                    </a>
+                </div>
+                
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="monitor" class="h-8 w-8 text-blue-600 flex-shrink-0"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Source Code Repository</h3>
+                    <p class="text-gray-600 mb-6 text-sm">Complete FRAVS system implementation and experimental code</p>
+                    <a href="#" class="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                        <i data-lucide="monitor" class="h-4 w-4"></i>
+                        <span>Download</span>
+                    </a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about-us" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Research Team</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Meet the dedicated team behind FRAVS – combining expertise in video technology, network engineering, and multimedia systems.
+                </p>
+            </div>
             
-            <!-- Additional Resources -->
-            <div class="mt-12 bg-white rounded-xl shadow-lg p-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Additional Resources</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Research Abstract</h4>
-                        <p class="text-gray-600 text-sm mb-3">Concise summary of research objectives and findings</p>
-                        <button class="text-primary-600 hover:text-primary-700 text-sm font-medium">Download Abstract →</button>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
+                    <div class="w-24 h-24 mx-auto mb-4">
+                        <div class="w-24 h-24 bg-blue-100 rounded-full border-4 border-blue-400 shadow flex items-center justify-center">
+                            <i data-lucide="user" class="h-12 w-12 text-blue-600"></i>
+                        </div>
                     </div>
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Experimental Data</h4>
-                        <p class="text-gray-600 text-sm mb-3">Raw data and test results from performance evaluations</p>
-                        <button class="text-primary-600 hover:text-primary-700 text-sm font-medium">Download Dataset →</button>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Dr. Gunawardhana L.K.P.D.</h3>
+                    <p class="text-blue-600 font-semibold mb-3">Supervisor</p>
+                    <p class="text-gray-600 text-sm mb-4">Academic Supervisor at Department of Information and Communication Technology, University of Sri Jayewardenepura</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="mailto:pulasthi@sjp.ac.lk" class="text-gray-500 hover:text-blue-600 transition-colors duration-200" title="Email">
+                            <i data-lucide="mail" class="h-5 w-5"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
+                    <div class="w-24 h-24 mx-auto mb-4">
+                        <div class="w-24 h-24 bg-green-100 rounded-full border-4 border-green-400 shadow flex items-center justify-center">
+                            <i data-lucide="user" class="h-12 w-12 text-green-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Dharmakeerthi M P B M</h3>
+                    <p class="text-blue-600 font-semibold mb-3">Lead Researcher</p>
+                    <p class="text-gray-600 text-sm mb-4">Software Technology specialist focusing on video encoding and streaming optimization</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="mailto:ict20832@fot.sjp.ac.lk" class="text-gray-500 hover:text-blue-600 transition-colors duration-200" title="Email">
+                            <i data-lucide="mail" class="h-5 w-5"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
+                    <div class="w-24 h-24 mx-auto mb-4">
+                        <div class="w-24 h-24 bg-purple-100 rounded-full border-4 border-purple-400 shadow flex items-center justify-center">
+                            <i data-lucide="user" class="h-12 w-12 text-purple-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Gunathilaka H A D D P</h3>
+                    <p class="text-blue-600 font-semibold mb-3">Network Technology Researcher</p>
+                    <p class="text-gray-600 text-sm mb-4">Network Technology expert specializing in adaptive streaming protocols</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="mailto:ict20845@fot.sjp.ac.lk" class="text-gray-500 hover:text-blue-600 transition-colors duration-200" title="Email">
+                            <i data-lucide="mail" class="h-5 w-5"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-200">
+                    <div class="w-24 h-24 mx-auto mb-4">
+                        <div class="w-24 h-24 bg-red-100 rounded-full border-4 border-red-400 shadow flex items-center justify-center">
+                            <i data-lucide="user" class="h-12 w-12 text-red-600"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Hiruni G K G</h3>
+                    <p class="text-blue-600 font-semibold mb-3">Multimedia Technology Researcher</p>
+                    <p class="text-gray-600 text-sm mb-4">Multimedia Technology researcher focusing on video quality assessment and optimization</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="mailto:ict20851@fot.sjp.ac.lk" class="text-gray-500 hover:text-blue-600 transition-colors duration-200" title="Email">
+                            <i data-lucide="mail" class="h-5 w-5"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -535,83 +494,99 @@
     </section>
 
     <!-- Contact Section -->
-    <section class="py-20 bg-white">
+    <section id="contact" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Contact & Collaboration</h2>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Contact Us</h2>
                 <p class="text-xl text-gray-600">
-                    Get in touch for research collaborations or technical discussions
+                    Get in touch with our research team for collaborations or inquiries
                 </p>
             </div>
+            
             <div class="grid lg:grid-cols-2 gap-12">
-                <!-- Contact Info -->
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Research Information</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Get In Touch</h3>
                     <div class="space-y-6">
                         <div class="flex items-start space-x-4">
-                            <svg class="w-6 h-6 text-primary-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
+                            <i data-lucide="map-pin" class="h-6 w-6 text-blue-600 mt-1"></i>
                             <div>
-                                <h4 class="font-semibold text-gray-900">Institution</h4>
+                                <h4 class="font-semibold text-gray-900">Address</h4>
                                 <p class="text-gray-600">
-                                    Department of Information and Communication Technology<br>
-                                    Faculty of Technology<br>
+                                    Department of Information and Communication Technology<br />
+                                    Faculty of Technology<br />
                                     University of Sri Jayewardenepura
                                 </p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-4">
-                            <svg class="w-6 h-6 text-primary-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
+                            <i data-lucide="mail" class="h-6 w-6 text-blue-600 mt-1"></i>
                             <div>
-                                <h4 class="font-semibold text-gray-900">Supervisor Contact</h4>
+                                <h4 class="font-semibold text-gray-900">Email</h4>
                                 <p class="text-gray-600">pulasthi@sjp.ac.lk</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4">
-                            <svg class="w-6 h-6 text-primary-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Research Repository</h4>
-                                <a href="#" class="text-primary-600 hover:text-primary-700 transition-colors duration-200">
-                                    github.com/videostream-research
-                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Contact Form -->
-                <div class="bg-gray-50 rounded-xl p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Send a Message</h3>
-                    <form class="space-y-6">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
+                    <form class="space-y-6" onsubmit="handleFormSubmit(event)">
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    First Name
+                                </label>
+                                <input
+                                    type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Last Name
+                                </label>
+                                <input
+                                    type="text"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                />
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                            />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Subject
+                            </label>
+                            <input
+                                type="text"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                            />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Message
+                            </label>
+                            <textarea
+                                rows="4"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                            ></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-primary-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200">
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                        >
                             Send Message
                         </button>
                     </form>
@@ -624,119 +599,131 @@
     <footer class="bg-gray-900 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Research Info -->
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">VS</span>
-                        </div>
-                        <span class="text-xl font-bold text-primary-400">VideoStream Research</span>
+                        <i data-lucide="play" class="h-8 w-8 text-blue-400"></i>
+                        <span class="text-xl font-bold text-blue-400">FRAVS</span>
                     </div>
                     <p class="text-gray-300 mb-4">
-                        Advancing video streaming technology through innovative compression and quality optimization
+                        Fixed-Resolution Adaptive Video System
                     </p>
                     <p class="text-gray-400 text-sm">
-                        University of Sri Jayewardenepura • Faculty of Technology • 2024
+                        Revolutionary video streaming technology for bandwidth-constrained environments.
                     </p>
                 </div>
                 
-                <!-- Quick Links -->
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Research Areas</h3>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="#abstract" class="hover:text-primary-400 transition-colors">Abstract</a></li>
-                        <li><a href="#objectives" class="hover:text-primary-400 transition-colors">Objectives</a></li>
-                        <li><a href="#methodology" class="hover:text-primary-400 transition-colors">Methodology</a></li>
-                        <li><a href="#team" class="hover:text-primary-400 transition-colors">Research Team</a></li>
-                        <li><a href="#downloads" class="hover:text-primary-400 transition-colors">Publications</a></li>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><button onclick="scrollToSection('#home')" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Home</button></li>
+                        <li><button onclick="scrollToSection('#project-scope')" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Project Scope</button></li>
+                        <li><button onclick="scrollToSection('#downloads')" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Downloads</button></li>
+                        <li><button onclick="scrollToSection('#about-us')" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">About Us</button></li>
                     </ul>
                 </div>
                 
-                <!-- Contact -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Contact</h3>
                     <div class="space-y-3">
                         <div class="flex items-center space-x-3">
-                            <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
+                            <i data-lucide="mail" class="h-5 w-5 text-blue-400"></i>
                             <span class="text-gray-300">pulasthi@sjp.ac.lk</span>
                         </div>
                         <div class="flex space-x-4 mt-4">
-                            <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                </svg>
+                            <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors duration-200">
+                                <i data-lucide="github" class="h-6 w-6"></i>
+                            </a>
+                            <a href="mailto:pulasthi@sjp.ac.lk" class="text-gray-400 hover:text-blue-400 transition-colors duration-200">
+                                <i data-lucide="mail" class="h-6 w-6"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
+            
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
                 <p class="text-gray-400">
-                    © 2024 VideoStream Research Project. All rights reserved.
+                    © 2025 FRAVS Research Project. University of Sri Jayewardenepura. All rights reserved.
                 </p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', function() {
-                // Mobile menu functionality would be implemented here
-                console.log('Mobile menu clicked');
-            });
-        }
-
-        // Add scroll effects
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                navbar.classList.add('bg-white');
-                navbar.classList.remove('bg-white/95');
-            } else {
-                navbar.classList.add('bg-white/95');
-                navbar.classList.remove('bg-white');
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
         });
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // Smooth scrolling function
+        function scrollToSection(selector) {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const menuIcon = menuBtn.querySelector('[data-lucide="menu"]');
+            const closeIcon = menuBtn.querySelector('[data-lucide="x"]');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                menuIcon.style.display = 'none';
+                if (!closeIcon) {
+                    menuBtn.innerHTML = '<i data-lucide="x" class="h-6 w-6"></i>';
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
                 }
-            });
-        }, observerOptions);
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuBtn.innerHTML = '<i data-lucide="menu" class="h-6 w-6"></i>';
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        }
 
-        // Observe sections for scroll animations
-        document.querySelectorAll('section').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(20px)';
-            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(section);
+        // Mobile menu button event listener
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-lg');
+                navbar.classList.remove('bg-white/95');
+                navbar.classList.add('bg-white');
+            } else {
+                navbar.classList.remove('shadow-lg');
+                navbar.classList.remove('bg-white');
+                navbar.classList.add('bg-white/95');
+            }
+        });
+
+        // Form submission handler
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            event.target.reset();
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                if (!mobileMenu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
+            }
         });
     </script>
 </body>
